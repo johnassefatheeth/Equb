@@ -7,6 +7,11 @@ const equbGroupSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User', 
+        required: true,
+    },
     totalAmount: {
       type: Number,
       required: true,
