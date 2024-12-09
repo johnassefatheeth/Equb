@@ -9,6 +9,10 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "mongoose": "^8.8.4"
+    "dotenv": "^16.4.7",
+    "http": "^0.0.1-security",
+    "mongodb": "^6.11.0",
+    "mongoose": "^8.8.4",
+    "nodemon": "^3.1.7"
   }
 }
