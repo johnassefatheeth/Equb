@@ -1,6 +1,8 @@
 const EqubGroup = require('../models/equb');
 const User = require('../models/user');
 
+
+//tested
 exports.createEqubGroupByAdmin = async (req, res) => {
   try {
     const { name, totalAmount, contributionPerUser, startDate, rounds, frequency } = req.body;
@@ -93,6 +95,7 @@ exports.joinEqubGroup = async (req, res) => {
   }
 };
 
+//tested
 exports.getEqubGroupById = async (req, res) => {
     try {
       const { id } = req.params;
@@ -111,8 +114,10 @@ exports.getEqubGroupById = async (req, res) => {
       console.error('Error fetching Equb group:', error);
       res.status(500).json({ message: 'Internal server error' });
     }
-  };
+};
 
+
+//tested
 exports.getAllEqubGroups = async (req, res) => {
   try {
      const equbGroups = await EqubGroup.find();
@@ -127,6 +132,7 @@ exports.getAllEqubGroups = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+
 
 exports.processEqubPayments = async () => {
   try {

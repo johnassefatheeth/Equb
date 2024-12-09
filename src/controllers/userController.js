@@ -1,57 +1,72 @@
 const User = require('../models/user');
-const OTPService = require('../services/otpService'); 
 const EqubGroup = require('../models/equb');
+const { generateOtp, sendOtpEmail } = require('../services/emailService');
+
 
 exports.sendOtp = async (req, res) => {
   try {
-    const { phone } = req.body;
+    const { email } = req.body;
 
-    if (!phone) {
-      return res.status(400).json({ message: 'Phone number is required' });
+    if (!email) {
+      return res.status(400).json({ message: 'Email is required' });
     }
 
-    const existingUser = await User.findOne({ phone });
-    if (existingUser) {
-      return res.status(400).json({ message: 'User already registered with this phone number' });
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
     }
 
-    const otp = OTPService.generateOtp(); 
-    await OTPService.sendOtp(phone, otp); 
+    const otp = generateOtp();
+    const otpExpiry = Date.now() + 5 * 60 * 1000; // OTP valid for 5 minutes
 
-    req.session.otp = otp;
-    req.session.phone = phone;
+    // Save OTP and expiry to the user's record
+    user.otp = otp;
+    user.otpExpiry = otpExpiry;
+    await user.save();
 
-    res.status(200).json({ message: 'OTP sent successfully' });
+    await sendOtpEmail(email, otp);
+
+    res.status(200).json({ message: 'OTP sent to your email' });
   } catch (error) {
-    res.status(500).json({ message: 'Error sending OTP', error });
+    console.error('Error sending OTP:', error);
+    res.status(500).json({ message: 'Internal server error', error });
+  }
+};
+ 
+exports.verifyOtp = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+
+    if (!email || !otp) {
+      return res.status(400).json({ message: 'Email and OTP are required' });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    if (!user.otp || user.otpExpiry < Date.now()) {
+      return res.status(400).json({ message: 'OTP is invalid or has expired' });
+    }
+
+    if (user.otp !== otp) {
+      return res.status(400).json({ message: 'Invalid OTP' });
+    }
+
+    // OTP verified successfully, clear OTP fields
+    user.otp = undefined;
+    user.otpExpiry = undefined;
+    await user.save();
+
+    res.status(200).json({ message: 'OTP verified successfully' });
+  } catch (error) {
+    console.error('Error verifying OTP:', error);
+    res.status(500).json({ message: 'Internal server error', error });
   }
 };
 
-exports.verifyOtp = async (req, res) => {
-    try {
-      const { phone, otp } = req.body;
-  
-      if (!phone || !otp) {
-        return res.status(400).json({ message: 'Phone number and OTP are required' });
-      }
-  
-      if (req.session.phone !== phone) {
-        return res.status(400).json({ message: 'Phone number does not match' });
-      }
-  
-      if (req.session.otp !== otp) {
-        return res.status(400).json({ message: 'Invalid OTP' });
-      }
-  
-      delete req.session.otp;
-  
-      res.status(200).json({ message: 'OTP verified successfully' });
-    } catch (error) {
-      res.status(500).json({ message: 'Error verifying OTP', error });
-    }
-  };
-
-  exports.collectPersonalInfo = async (req, res) => {
+exports.collectPersonalInfo = async (req, res) => {
     try {
       const { phone, name, gender, password, confirmPassword } = req.body;
   
@@ -76,9 +91,9 @@ exports.verifyOtp = async (req, res) => {
     } catch (error) {
       res.status(500).json({ message: 'Error saving personal information', error });
     }
-  };
+};
 
-  exports.collectAddressInfo = async (req, res) => {
+exports.collectAddressInfo = async (req, res) => {
     try {
       const { userId, city, subCity, woreda, houseNo, specificLocation } = req.body;
   
@@ -102,9 +117,8 @@ exports.verifyOtp = async (req, res) => {
     } catch (error) {
       res.status(500).json({ message: 'Error saving address information', error });
     }
-  };
+};
   
- 
 exports.getUserEqubGroups = async (req, res) => {
   try {
     const userId = req.user._id;  
