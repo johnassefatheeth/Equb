@@ -1,5 +1,5 @@
 const express = require('express');
-const { createEqubGroupByAdmin, joinEqubGroup, getAllEqubGroups, getEqubGroupById } = require('../controllers/equbController');
+const { createEqubGroupByAdmin, joinEqubGroup, getAllEqubGroups, getEqubGroupById, processEqubPaymentsHandler } = require('../controllers/equbController');
 const { isAdmin, isLogin } = require('../middlewares/authMiddleware'); 
 
 const router = express.Router();
@@ -11,5 +11,8 @@ const router = express.Router();
  router.get('/equb/:id', /* isLogin ,*/ getEqubGroupById);
 
  router.get('/equbs', /* isLogin ,*/ getAllEqubGroups);
+
+ router.post('/process-payments', processEqubPaymentsHandler);
+
 
 module.exports = router;

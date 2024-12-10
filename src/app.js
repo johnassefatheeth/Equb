@@ -1,6 +1,7 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const equbRoutes = require('./routes/equbRouter');
+const userRoutes = require('./routes/userRouter');
 
 
  dotenv.config();
@@ -15,5 +16,7 @@ const equbRoutes = require('./routes/equbRouter');
 
 
  app.use('/api/equbs', equbRoutes);
+ app.use('/api/users', userRoutes);
+
 
  module.exports = app;

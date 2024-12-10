@@ -3,6 +3,7 @@ const EqubGroup = require('../models/equb');
 const { generateOtp, sendOtpEmail } = require('../services/emailService');
 
 
+
 exports.sendOtp = async (req, res) => {
   try {
     const { email } = req.body;
@@ -11,18 +12,19 @@ exports.sendOtp = async (req, res) => {
       return res.status(400).json({ message: 'Email is required' });
     }
 
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
+    // const user = await User.findOne({ email });
+    // if (!user) {
+    //   return res.status(404).json({ message: 'User not found' });
+    // }
 
     const otp = generateOtp();
-    const otpExpiry = Date.now() + 5 * 60 * 1000; // OTP valid for 5 minutes
+    
+    // const otpExpiry = Date.now() + 5 * 60 * 1000; // OTP valid for 5 minutes
 
     // Save OTP and expiry to the user's record
-    user.otp = otp;
-    user.otpExpiry = otpExpiry;
-    await user.save();
+    // user.otp = otp;
+    // user.otpExpiry = otpExpiry;
+    // await user.save();
 
     await sendOtpEmail(email, otp);
 
@@ -32,7 +34,7 @@ exports.sendOtp = async (req, res) => {
     res.status(500).json({ message: 'Internal server error', error });
   }
 };
- 
+
 exports.verifyOtp = async (req, res) => {
   try {
     const { email, otp } = req.body;
@@ -118,7 +120,7 @@ exports.collectAddressInfo = async (req, res) => {
       res.status(500).json({ message: 'Error saving address information', error });
     }
 };
-  
+
 exports.getUserEqubGroups = async (req, res) => {
   try {
     const userId = req.user._id;  
@@ -137,6 +139,3 @@ exports.getUserEqubGroups = async (req, res) => {
     res.status(500).json({ message: 'Error fetching user Equb groups', error });
   }
 };
-
-
-  

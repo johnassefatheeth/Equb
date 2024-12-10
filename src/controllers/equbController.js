@@ -181,3 +181,14 @@ exports.processEqubPayments = async () => {
     console.error('Error processing Equb payments:', error);
   }
 };
+
+
+exports.processEqubPaymentsHandler = async (req, res) => {
+  try {
+    await processEqubPayments();
+    res.status(200).json({ message: 'Payments processed successfully' });
+  } catch (error) {
+    console.error('Error in processEqubPaymentsHandler:', error);
+    res.status(500).json({ message: 'Error processing Equb payments', error });
+  }
+};
