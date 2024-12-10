@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 require('dotenv').config();
+const { checkAndCompleteEqubs } = require('../services/scheduler')
 
 const MONGO_URL = process.env.MONGO_URL || 'mongodb+srv://danialemayehu32:K7AFpWzvudQ8FJAZ@cluster0.gvjpw.mongodb.net/'
 
@@ -19,6 +20,8 @@ async function mongoConnect() {
     useUnifiedTopology: true,
   });
   console.log('Connected to MongoDB successfully!');
+  await checkAndCompleteEqubs();
+
 }
 
 async function mongoDisconnect() {

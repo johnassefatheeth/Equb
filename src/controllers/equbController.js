@@ -192,3 +192,5 @@ exports.processEqubPaymentsHandler = async (req, res) => {
     res.status(500).json({ message: 'Error processing Equb payments', error });
   }
 };
+
+
