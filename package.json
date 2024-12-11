@@ -11,6 +11,7 @@
   "dependencies": {
     "crypto": "^1.0.1",
     "dotenv": "^16.4.7",
+    "express": "^4.21.2",
     "http": "^0.0.1-security",
     "mongodb": "^6.11.0",
     "mongoose": "^8.8.4",
