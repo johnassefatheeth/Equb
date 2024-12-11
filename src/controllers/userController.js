@@ -2,8 +2,6 @@ const User = require('../models/user');
 const EqubGroup = require('../models/equb');
 const { generateOtp, sendOtpEmail } = require('../services/emailService');
 
-
-
 exports.sendOtp = async (req, res) => {
   try {
     const { email } = req.body;

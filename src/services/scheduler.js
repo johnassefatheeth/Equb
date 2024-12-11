@@ -1,5 +1,6 @@
 const cron = require('node-cron');
 const EqubGroup = require('../models/equb');
+const { processEqubPayments } = require('../controllers/equbController');
 
 const checkAndCompleteEqubs = async () => {
   try {
@@ -33,10 +34,12 @@ const checkAndCompleteEqubs = async () => {
   }
 };
 
- cron.schedule('0 0 * * *', () => {
-  console.log('Running daily Equb completion check...');
+cron.schedule('0 0 * * *', () => {
+  console.log('Running all scheduled Equb tasks...');
   checkAndCompleteEqubs();
+  processEqubPayments();
 });
+
 
 
 module.exports = {

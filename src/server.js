@@ -5,6 +5,7 @@ const {
     mongoConnect,
     mongoDisconnect,
   } = require('./config/db')
+require('./services/scheduler');
 
 
 const PORT = process.env.PORT || 5000

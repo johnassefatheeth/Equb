@@ -1,5 +1,6 @@
 const EqubGroup = require('../models/equb');
 const User = require('../models/user');
+ 
 
 
 //tested
@@ -134,30 +135,44 @@ exports.getAllEqubGroups = async (req, res) => {
 };
 
 
+ 
 exports.processEqubPayments = async () => {
   try {
     const today = new Date();
 
-    // Fetch Equb groups with due payouts
-    const dueEqubGroups = await EqubGroup.find({
+     const dueEqubGroups = await EqubGroup.find({
       status: 'active',
       nextPayoutDate: { $lte: today },
     });
 
+    let processedCount = 0;
+
     for (const equbGroup of dueEqubGroups) {
-      // Find participants who haven't received a payout
-      const eligibleParticipants = equbGroup.participants.filter(
+       const eligibleParticipants = equbGroup.participants.filter(
         (participant) => !participant.hasReceivedPayout
       );
 
-      if (eligibleParticipants.length === 0) {
-        // Reset round if all participants have received payouts
-        equbGroup.participants.forEach((participant) => {
-          participant.hasReceivedPayout = false;
-        });
-        equbGroup.nextPayoutDate = calculateNextPayoutDate(today, equbGroup.type);
+       if (eligibleParticipants.length === 0) {
+        equbGroup.currentRound += 1;
+
+        if (equbGroup.currentRound >= equbGroup.rounds) {
+          equbGroup.status = 'completed';
+          equbGroup.nextPayoutDate = null;
+          console.log(`Equb group "${equbGroup.name}" has completed all rounds.`);
+        } else {
+          equbGroup.participants.forEach((participant) => {
+            participant.hasReceivedPayout = false;
+          });
+          equbGroup.nextPayoutDate = calculateNextPayoutDate(
+            equbGroup.startDate,
+            equbGroup.frequency,
+            equbGroup.currentRound,
+            equbGroup.rounds
+          );
+          console.log(`Equb group "${equbGroup.name}" reset for round ${equbGroup.currentRound}.`);
+        }
+
         await equbGroup.save();
-        console.log(`Equb group "${equbGroup.name}" reset for a new round.`);
         continue;
       }
 
@@ -171,25 +186,50 @@ exports.processEqubPayments = async () => {
         return participant;
       });
 
-      equbGroup.nextPayoutDate = calculateNextPayoutDate(today, equbGroup.type);
+       equbGroup.nextPayoutDate = calculateNextPayoutDate(
+        equbGroup.startDate,
+        equbGroup.frequency,
+        equbGroup.currentRound,
+        equbGroup.rounds
+      );
 
       await equbGroup.save();
 
-      console.log(`Payment given to user ${selectedParticipant.userId} in group "${equbGroup.name}".`);
+      processedCount++;
+      console.log(
+        `Payment given to user ${selectedParticipant.userId} in group "${equbGroup.name}".`
+      );
     }
+
+    console.log(`Processed ${processedCount} Equb payments.`);
   } catch (error) {
     console.error('Error processing Equb payments:', error);
   }
 };
 
 
-exports.processEqubPaymentsHandler = async (req, res) => {
+exports.getCompletedEqubs = async (req, res) => {
   try {
-    await processEqubPayments();
-    res.status(200).json({ message: 'Payments processed successfully' });
+    const completedEqubs = await EqubGroup.find({ status: 'completed' });
+
+    if (completedEqubs.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'No completed Equbs found',
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      count: completedEqubs.length,
+      data: completedEqubs,
+    });
   } catch (error) {
-    console.error('Error in processEqubPaymentsHandler:', error);
-    res.status(500).json({ message: 'Error processing Equb payments', error });
+    console.error('Error fetching completed Equbs:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+    });
   }
 };
 

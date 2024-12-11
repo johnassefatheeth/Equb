@@ -8,9 +8,8 @@ const equbGroupSchema = new mongoose.Schema(
       trim: true,
     },
     createdBy: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User', 
-        // required: true,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
     },
     totalAmount: {
       type: Number,
@@ -30,19 +29,19 @@ const equbGroupSchema = new mongoose.Schema(
     },
     frequency: {
       type: String,
-      enum: ['daily', 'weekly', 'monthly'], 
+      enum: ['daily', 'weekly', 'monthly'],
       required: true,
     },
     status: {
       type: String,
-      enum: ['active', 'completed', 'canceled'], 
-      default: 'active', 
+      enum: ['active', 'completed', 'canceled'],
+      default: 'active',
     },
     participants: [
       {
         userId: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: 'User', 
+          ref: 'User',
           required: true,
         },
         hasReceivedPayout: {
@@ -51,7 +50,7 @@ const equbGroupSchema = new mongoose.Schema(
         },
         contributedAmount: {
           type: Number,
-          default: 0, 
+          default: 0,
         },
         joinDate: {
           type: Date,
@@ -63,27 +62,50 @@ const equbGroupSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
+    nextPayoutDate: {
+      type: Date,
+    },
+    currentRound: {
+      type: Number,
+      default: 0,  
+    },
   },
   {
-    timestamps: true, 
+    timestamps: true,
   }
 );
 
-
 equbGroupSchema.pre('save', function (next) {
-  if (!this.nextPayoutDate) {
-    this.nextPayoutDate = calculateNextPayoutDate(this.startDate, this.frequency);
+  if (this.status === 'completed') {
+    this.nextPayoutDate = null;
+  } else if (!this.nextPayoutDate || this.isModified('currentRound')) {
+    this.nextPayoutDate = calculateNextPayoutDate(this.startDate, this.frequency, this.currentRound, this.rounds);
   }
   next();
 });
 
- function calculateNextPayoutDate(startDate, frequency) {
+
+function calculateNextPayoutDate(startDate, frequency, currentRound, totalRounds) {
+  if (currentRound >= totalRounds) return null; 
+
   const date = new Date(startDate);
-  if (frequency === 'daily') date.setDate(date.getDate() + 1);
-  else if (frequency === 'weekly') date.setDate(date.getDate() + 7);
-  else if (frequency === 'monthly') date.setMonth(date.getMonth() + 1);
+
+  switch (frequency) {
+    case 'daily':
+      date.setDate(date.getDate() + currentRound + 1);  
+      break;
+    case 'weekly':
+      date.setDate(date.getDate() + (currentRound + 1) * 7);  
+      break;
+    case 'monthly':
+      date.setMonth(date.getMonth() + currentRound + 1);  
+    default:
+      throw new Error('Invalid frequency value');
+  }
+
   return date;
 }
+
 
 
 const EqubGroup = mongoose.model('EqubGroup', equbGroupSchema);
