@@ -37,7 +37,7 @@ const userSchema = new mongoose.Schema(
       required: true,
     },
     woreda: {
-      type: Number, 
+      type: Number,
       required: true,
     },
     houseNo: {
@@ -45,7 +45,7 @@ const userSchema = new mongoose.Schema(
       required: true,
     },
     specificLocation: {
-      type: String, 
+      type: String,
       required: false,
       trim: true,
     },
@@ -73,11 +73,19 @@ const userSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
-    otp: { type: String },
-    otpExpiry: { type: Date },
+    otp: {
+      type: String,
+    },
+    otpExpiresAt: {
+      type: Date,
+    },
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
-    timestamps: true, 
+    timestamps: true,
   }
 );
 

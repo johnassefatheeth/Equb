@@ -8,7 +8,7 @@ const { createToken } = require('../utils/createToken')
   exports.SignUp_Post = async (req, res) => {
     const { name, email, password ,
             phone,gender,confirmpassword,
-            city,subcity,woreda,housenumber
+            city, subCity, woreda, houseNo
     } = req.body;
 
     const user=await User.findOne({email})
@@ -25,9 +25,9 @@ const { createToken } = require('../utils/createToken')
       const otp = crypto.randomInt(100000, 999999).toString(); 
       const otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000); 
   
-      const user = new User({ name, email, password, otp, otpExpiresAt,
+      const user = new User({ name, email, password , otp, otpExpiresAt,
                               phone,gender,confirmpassword,
-                              city,subcity,woreda,housenumber
+                              city, subCity, woreda, houseNo
        });
       await user.save();
       
@@ -48,7 +48,7 @@ const { createToken } = require('../utils/createToken')
       if (!user) {
         return res.status(400).json({ error: 'User not found.' });
       }
-  
+      
       if (user.otp !== otp) {
         return res.status(400).json({ error: 'Invalid OTP.' });
       }
