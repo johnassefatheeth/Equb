@@ -1,6 +1,6 @@
 const express = require('express');
 const { createEqubGroupByAdmin, joinEqubGroup, getAllEqubGroups, getEqubGroupById, processEqubPayments, getCompletedEqubs } = require('../controllers/equbController');
-// const { isAdmin, isLogin } = require('../middlewares/authMiddleware'); 
+const { isAdmin, isLogin } = require('../middlewares/authMiddleware'); 
 const { checkAndCompleteEqubs } = require('../services/scheduler')
 
 const router = express.Router();
