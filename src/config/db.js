@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 require('dotenv').config();
 const { checkAndCompleteEqubs } = require('../services/scheduler')
 
-const MONGO_URL = process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/ekub'
+const MONGO_URL = process.env.MONGO_URL 
 
 mongoose.connection.once('open', () => {
   console.log('MongoDB connection ready!');
@@ -13,7 +13,6 @@ mongoose.connection.on('error', (err) => {
 });
 async function mongoConnect() {
   console.log('Connecting to MongoDB...');
-  console.log(MONGO_URL)
   await mongoose.connect(MONGO_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
