@@ -53,16 +53,16 @@ exports.createEqubGroupByAdmin = async (req, res) => {
   }
 };
 
-
+//tested
 exports.joinEqubGroup = async (req, res) => {
   try {
-    const { groupId } = req.params;  
+    const { equbId } = req.params;  
     const userId = req.user._id;  
-    if (!groupId) {
+    if (!equbId) {
       return res.status(400).json({ message: 'Group ID is required' });
     }
 
-     const equbGroup = await EqubGroup.findById(groupId);
+     const equbGroup = await EqubGroup.findById(equbId);
 
     if (!equbGroup) {
       return res.status(404).json({ message: 'Equb group not found' });

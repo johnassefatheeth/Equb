@@ -7,7 +7,7 @@ const router = express.Router();
 
  router.post('/create', /*isAdmin ,*/ createEqubGroupByAdmin);
 
- router.post('/join', isLogin , joinEqubGroup);
+ router.post('/join/:equbId', isLogin , joinEqubGroup);
 
  router.get('/equb/:id',  isLogin , getEqubGroupById);
 
