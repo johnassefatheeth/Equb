@@ -3,7 +3,7 @@ const bcrypt=require('bcrypt')
 const crypto=require('crypto')
 const { sendOtpEmail } = require('../services/emailService')
 const { createToken } = require('../utils/createToken')
-
+const { isPassMatched, hashPassword } = require('../utils/passwordHelper')
 
   exports.SignUp_Post = async (req, res) => {
     const { name, email, password ,
@@ -25,7 +25,7 @@ const { createToken } = require('../utils/createToken')
       const otp = crypto.randomInt(100000, 999999).toString(); 
       const otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000); 
   
-      const user = new User({ name, email, password , otp, otpExpiresAt,
+      const user = new User({ name, email, password : await hashPassword(password) , otp, otpExpiresAt,
                               phone,gender,confirmpassword,
                               city, subCity, woreda, houseNo
        });
@@ -69,22 +69,30 @@ const { createToken } = require('../utils/createToken')
   };
   
   
-exports.LogIn_Post=async(req,res)=>{
-    const {email,password}=req.body
-    const user=await User.findOne({email})
-    if(!user){
-       return res.json('user does not exist')
-    }
-    const isMatch=await bcrypt.compare(password,user.password)
-    if(!isMatch){
-       return res.json('incorrect password')
-    }
-    const token=createToken(user._id)
-    res.cookie('jwt',token,{httpOnly:true,maxAge: 3600000})
-        res.json(user)
-}
+exports.LogIn_Post=async (req, res) => {
+  const { email, password } = req.body;
+
+  const newUser = await User.findOne({ email });
+
+  if (!newUser) {
+      return res.status(404).json({ message: "Account not found" });
+  }
+
+  const isMatched = await isPassMatched(password, newUser.password);
+
+  if (!isMatched) {
+      console.error(`Failed login attempt for email: ${email}`);
+      return res.status(401).json({ message: "Invalid login credentials" });
+  } else {
+      const token=createToken(newUser._id)
+      res.cookie('jwt',token,{httpOnly:true,maxAge: 3600000})
+      res.json(newUser)
+  }
+};
+
 
 exports.LogOut_Post=async(req,res)=>{
     res.cookie('jwt','',{maxAge:0,httpOnly:true})
     res.json('logout success')
 }
+

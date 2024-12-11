@@ -7,11 +7,11 @@ const router = express.Router();
 
  router.post('/create', /*isAdmin ,*/ createEqubGroupByAdmin);
 
- router.post('/join',/* isLogin ,*/ joinEqubGroup);
+ router.post('/join', isLogin , joinEqubGroup);
 
- router.get('/equb/:id', /* isLogin ,*/ getEqubGroupById);
+ router.get('/equb/:id',  isLogin , getEqubGroupById);
 
- router.get('/equbs', /* isLogin ,*/ getAllEqubGroups);
+ router.get('/equbs',  isLogin , getAllEqubGroups);
 
  router.post('/process-payments', processEqubPayments);
 

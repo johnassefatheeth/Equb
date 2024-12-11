@@ -5,7 +5,7 @@ const { isLogin } = require('../middlewares/authMiddleware')
 const router = express.Router();
 
 
-router.get('/user/equb-groups',/* isLogin,*/ getUserEqubGroups);
+router.get('/equb-groups', isLogin, getUserEqubGroups);
 
 
 module.exports = router;
