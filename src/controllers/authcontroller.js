@@ -5,8 +5,6 @@ const { sendOtpEmail } = require('../services/emailService')
 const { createToken } = require('../utils/createToken')
 
 
-
-
   exports.SignUp_Post = async (req, res) => {
     const { name, email, password ,
             phone,gender,confirmpassword,
