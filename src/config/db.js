@@ -13,10 +13,7 @@ mongoose.connection.on('error', (err) => {
 });
 async function mongoConnect() {
   console.log('Connecting to MongoDB...');
-  await mongoose.connect(MONGO_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  });
+  await mongoose.connect(MONGO_URL);
   console.log('Connected to MongoDB successfully!');
   await checkAndCompleteEqubs();
 
