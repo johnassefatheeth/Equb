@@ -34,7 +34,7 @@ const equbGroupSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['active', 'completed', 'canceled'],
+      enum: ['active', 'completed', 'pending'],
       default: 'active',
     },
     participants: [

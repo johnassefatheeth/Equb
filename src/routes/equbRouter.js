@@ -1,11 +1,10 @@
 const express = require('express');
-const { createEqubGroupByAdmin, joinEqubGroup, getAllEqubGroups, getEqubGroupById, processEqubPayments, getCompletedEqubs } = require('../controllers/equbController');
+const { joinEqubGroup, getAllEqubGroups, getEqubGroupById, processEqubPayments, getCompletedEqubs } = require('../controllers/equbController');
 const { isAdmin, isLogin } = require('../middlewares/authMiddleware'); 
 const { checkAndCompleteEqubs } = require('../services/scheduler')
 
 const router = express.Router();
 
- router.post('/create', /*isAdmin ,*/ createEqubGroupByAdmin);
 
  router.post('/join/:equbId', isLogin , joinEqubGroup);
 
