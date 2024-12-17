@@ -85,7 +85,7 @@ exports.LogIn_Post=async (req, res) => {
       console.error(`Failed login attempt for email: ${email}`);
       return res.status(401).json({ message: "Invalid login credentials" });
   } else {
-      const token=createToken(newUser._id)
+      const token=createToken(newUser._id,maxAge=7*24*60*60)
       return res.json({
         message: "Login successful",
         token: token,  // Send the JWT token in the body
