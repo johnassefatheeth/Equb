@@ -44,3 +44,21 @@ exports.submitJoinRequest = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+exports.getUserData = async (req, res) => {
+  try {
+    const userId = req.user._id; 
+    
+    const user = await User.findById(userId).select('-password -otp -otpExpiresAt -isVerified -createdAt -updatedAt -specificLocation -__v');
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Return user data as JSON
+    res.status(200).json({ message: 'User data fetched successfully', user });
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+    res.status(500).json({ message: 'Error fetching user data', error: error.message });
+  }
+};
