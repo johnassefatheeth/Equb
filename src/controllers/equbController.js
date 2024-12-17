@@ -4,54 +4,6 @@ const User = require('../models/user');
 
 
 //tested
-exports.createEqubGroupByAdmin = async (req, res) => {
-  try {
-    const { name, totalAmount, contributionPerUser, startDate, rounds, frequency } = req.body;
-    // const adminId = req.user._id;
-
-    // if (!req.user.isAdmin) {
-    //   return res.status(403).json({ message: 'Only admins can create Equb groups' });
-    // }
-
-    if (!name || !totalAmount || !contributionPerUser || !startDate || !rounds || !frequency) {
-      return res.status(400).json({ message: 'All fields are required' });
-    }
-
-    // Calculate end date based on frequency and rounds
-    const frequencyMapping = {
-      daily: 1,
-      weekly: 7,
-      monthly: 30,
-    };
-
-    const intervalDays = frequencyMapping[frequency];
-    if (!intervalDays) {
-      return res.status(400).json({ message: 'Invalid frequency provided' });
-    }
-
-    const calculatedEndDate = new Date(startDate);
-    calculatedEndDate.setDate(calculatedEndDate.getDate() + rounds * intervalDays);
-
-    const equbGroup = new EqubGroup({
-      name,
-      // createdBy: adminId,
-      totalAmount,
-      contributionPerUser,
-      startDate,
-      rounds,
-      frequency,
-      endDate: calculatedEndDate,
-      status: 'active',
-      participants: [],
-    });
-
-    await equbGroup.save();
-
-    res.status(201).json({ message: 'Equb group created successfully', equbGroup });
-  } catch (error) {
-    res.status(500).json({ message: 'Error creating Equb group', error });
-  }
-};
 
 //tested
 exports.joinEqubGroup = async (req, res) => {
