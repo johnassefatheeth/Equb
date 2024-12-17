@@ -86,7 +86,16 @@ exports.LogIn_Post=async (req, res) => {
       return res.status(401).json({ message: "Invalid login credentials" });
   } else {
       const token=createToken(newUser._id)
-      res.cookie('jwt',token,{httpOnly:true,maxAge: 3600000*24*7})
+      return res.json({
+        message: "Login successful",
+        token: token,  // Send the JWT token in the body
+        user: {
+          email: newUser.email,
+          name: newUser.name,
+          phone: newUser.phone,
+        }
+      });
+      
       res.json(newUser)
   }
 };
