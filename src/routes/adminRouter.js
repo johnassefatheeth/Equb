@@ -4,7 +4,7 @@ const { createEqubGroupByAdmin, fetchJoinRequests } = require('../controllers/ad
 
 
 
-router.post('/approve-request/:requestId', isLogin, isAdmin, approveJoinRequest);
+router.post('/approve-request/:requestId', isLogin, /*isAdmin,*/ approveJoinRequest);
 router.post('/create', /*isAdmin ,*/ createEqubGroupByAdmin);
-router.get('/join-requests', isLogin, isAdmin, fetchJoinRequests);
+router.get('/join-requests', isLogin, /*isAdmin,*/ fetchJoinRequests);
 

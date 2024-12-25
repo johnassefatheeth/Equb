@@ -12,7 +12,7 @@ const router = express.Router();
 
  router.get('/equbs',  isLogin , getAllEqubGroups);
 
- router.post('/process-payments', processEqubPayments);
+//  router.post('/process-payments', processEqubPayments);
 
  router.get('/get-complete-equbs', getCompletedEqubs);
 

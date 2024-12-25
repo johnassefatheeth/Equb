@@ -1,4 +1,6 @@
 const EqubGroup = require('../models/EqubGroup');
+const Admin = require('../models/admin');
+const { hashPassword, isPassMatched } = require('../utils/passwordHelper')
 
 exports.approveJoinRequest = async (req, res) => {
   const { requestId } = req.params;
@@ -23,8 +25,6 @@ exports.approveJoinRequest = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-
-
 
 exports.createEqubGroupByAdmin = async (req, res) => {
     try {
@@ -75,7 +75,7 @@ exports.createEqubGroupByAdmin = async (req, res) => {
     }
   };
   
-  exports.fetchJoinRequests = async (req, res) => {
+exports.fetchJoinRequests = async (req, res) => {
     try {
       const joinRequests = await JoinRequest.find()
         .populate('userId', 'name email') 
@@ -87,3 +87,64 @@ exports.createEqubGroupByAdmin = async (req, res) => {
     }
   };
   
+// exports.registerAdminCtrl = async (req, res) => {
+//     const { username, email, password } = req.body;
+  
+//     const existingAdmin = await Admin.findOne({ email });
+//     if (existingAdmin) {
+//       return res.status(409).json({ message: 'Admin with this email already exists' });
+//     }
+  
+  
+//      const newAdmin = await Admin.create({
+//       username,
+//       email,
+//       password : await hashPassword(password),
+//       role: 'admin'
+//   })
+  
+//      await newAdmin.save();
+  
+//     res.status(201).json({ message: 'Admin registered successfully' });
+//   };
+  
+exports.adminLoginCtrl = async (req, res) => {
+
+      const { email, password } = req.body;
+    
+      const admin = await Admin.findOne({ email });
+    
+      const isMatched = await isPassMatched(password, admin.password)
+  
+       if ( !isMatched ) {
+        return res.status(401).json({ message: 'Invalid email or password' });
+      }
+    
+      res.json({
+          data: generateToken(admin._id),
+          message :"Admin logged in successfully"
+      })
+    
+  };
+
+
+exports.registerAdminCtrl = async (req, res) => {
+  
+    const { username, email, password } = req.body;
+  
+    const existingAdmin = await Admin.findOne({ email });
+    if (existingAdmin) {
+      return res.status(409).json({ message: 'Admin with this email already exists' });
+    }
+  
+    const newAdmin = await Admin.create({
+      username,
+      email,
+      password : await hashPassword(password),
+      role: 'admin'
+  })
+  
+    await newAdmin.save();
+  
+    res.status(201).json({ message: 'Admin registered successfully' });
+  };
