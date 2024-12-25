@@ -4,6 +4,7 @@ const cookieParser=require('cookie-parser')
 const equbRoutes = require('./routes/equbRouter');
 const userRoutes = require('./routes/userRouter');
 const authRoutes=require('./routes/authroutes')
+const adminRoutes = require('./routes/adminRouter');
 const cors = require('cors');
 
 
@@ -26,10 +27,11 @@ const cors = require('cors');
 //   app.use(morgan('dev'));  
 // }
 
-
+ app.use('/api/admin', adminRoutes);
  app.use('/api/equbs', equbRoutes);
  app.use('/api/users', userRoutes);
  app.use('/api/users', authRoutes);
+
 
 
  module.exports = app;

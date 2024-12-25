@@ -1,6 +1,7 @@
-const EqubGroup = require('../models/EqubGroup');
+const EqubGroup = require('../models/equb');
 const Admin = require('../models/admin');
 const { hashPassword, isPassMatched } = require('../utils/passwordHelper')
+const {  createToken } = require('../utils/createToken')
 
 exports.approveJoinRequest = async (req, res) => {
   const { requestId } = req.params;
@@ -121,7 +122,7 @@ exports.adminLoginCtrl = async (req, res) => {
       }
     
       res.json({
-          data: generateToken(admin._id),
+          data: createToken(admin._id),
           message :"Admin logged in successfully"
       })
     
@@ -129,7 +130,7 @@ exports.adminLoginCtrl = async (req, res) => {
 
 
 exports.registerAdminCtrl = async (req, res) => {
-  
+
     const { username, email, password } = req.body;
   
     const existingAdmin = await Admin.findOne({ email });
