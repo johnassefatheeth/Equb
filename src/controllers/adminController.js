@@ -88,27 +88,6 @@ exports.fetchJoinRequests = async (req, res) => {
     }
   };
   
-// exports.registerAdminCtrl = async (req, res) => {
-//     const { username, email, password } = req.body;
-  
-//     const existingAdmin = await Admin.findOne({ email });
-//     if (existingAdmin) {
-//       return res.status(409).json({ message: 'Admin with this email already exists' });
-//     }
-  
-  
-//      const newAdmin = await Admin.create({
-//       username,
-//       email,
-//       password : await hashPassword(password),
-//       role: 'admin'
-//   })
-  
-//      await newAdmin.save();
-  
-//     res.status(201).json({ message: 'Admin registered successfully' });
-//   };
-  
 exports.adminLoginCtrl = async (req, res) => {
 
       const { email, password } = req.body;
@@ -127,7 +106,6 @@ exports.adminLoginCtrl = async (req, res) => {
       })
     
   };
-
 
 exports.registerAdminCtrl = async (req, res) => {
 
