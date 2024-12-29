@@ -7,7 +7,7 @@ const checkAndCompleteEqubs = async () => {
     const today = new Date();
 
      const equbGroups = await EqubGroup.find({
-      status: 'active',
+      status: 'completed',
       endDate: { $lte: today },
     });
 

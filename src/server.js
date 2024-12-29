@@ -1,7 +1,6 @@
 require("dotenv").config();
 const app = require('./app');
 const http = require('http');
-// Enable CORS for all sources
 
 const {
     mongoConnect,
@@ -19,6 +18,7 @@ async function dbConnect() {
 }
 
 server.listen(PORT, () => {
-    console.log(`Server is listening on port ${PORT}`);
     dbConnect();
+    console.log(`Server is listening on port ${PORT}`);
+    
 });
