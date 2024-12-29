@@ -4,6 +4,7 @@ const cookieParser=require('cookie-parser')
 const equbRoutes = require('./routes/equbRouter');
 const userRoutes = require('./routes/userRouter');
 const authRoutes=require('./routes/authroutes')
+// const adminRoutes=require('./routes/adminRouter')
 const cors = require('cors');
 
 
@@ -30,6 +31,7 @@ const cors = require('cors');
  app.use('/api/equbs', equbRoutes);
  app.use('/api/users', userRoutes);
  app.use('/api/users', authRoutes);
+//  app.use('/api/users', authRoutes);
 
 
  module.exports = app;
