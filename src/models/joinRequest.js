@@ -25,7 +25,11 @@ const joinRequestSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
-  },
+    userAccNumber: {
+     type: String,
+     required: true,
+    }
+     },
   { timestamps: true }
 );
 

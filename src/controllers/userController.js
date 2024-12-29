@@ -1,6 +1,11 @@
 const User = require('../models/user');
 const EqubGroup = require('../models/equb');
 const JoinRequest = require('../models/joinRequest');
+const bcrypt=require('bcrypt')
+const { isPassMatched, hashPassword } = require('../utils/passwordHelper');
+const { sendmail } = require('../services/emailService');
+
+
 
 exports.getUserEqubGroups = async (req, res) => {
   try {
@@ -21,9 +26,8 @@ exports.getUserEqubGroups = async (req, res) => {
   }
 };
 
-
 exports.submitJoinRequest = async (req, res) => {
-  const { equbId } = req.body; 
+  const { equbId, userAccNumber } = req.body; 
   const userId = req.user._id; 
   const receiptImage = req.file ? req.file.path : null;
 
@@ -36,6 +40,7 @@ exports.submitJoinRequest = async (req, res) => {
       userId,
       equbId,
       receiptImage,
+      userAccNumber
     });
 
     await newRequest.save();

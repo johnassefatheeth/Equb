@@ -71,9 +71,10 @@ const { isPassMatched, hashPassword } = require('../utils/passwordHelper')
   
   
 exports.LogIn_Post=async (req, res) => {
-  const { email, password } = req.body;
 
-  const newUser = await User.findOne({ email });
+  const { phone, password } = req.body;
+
+  const newUser = await User.findOne({ phone });
 
   if (!newUser) {
       return res.status(404).json({ message: "Account not found" });
@@ -88,15 +89,13 @@ exports.LogIn_Post=async (req, res) => {
       const token=createToken(newUser._id,maxAge=7*24*60*60)
       return res.json({
         message: "Login successful",
-        token: token,  // Send the JWT token in the body
+        token: token,  
         user: {
           email: newUser.email,
           name: newUser.name,
           phone: newUser.phone,
         }
       });
-      
-      res.json(newUser)
   }
 };
 
